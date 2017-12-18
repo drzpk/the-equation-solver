@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\components">
+      <UniqueIdentifier>{37d92bbf-d864-43ab-b0fe-54d5ad0c61ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\solving">
+      <UniqueIdentifier>{77227b45-c4b8-4b66-8b9b-cb3a8ba1e019}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\components">
+      <UniqueIdentifier>{f9f47e90-3352-4caa-a1f4-4206db1246e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\solving">
+      <UniqueIdentifier>{86512a60-65e2-44ce-a5a2-0d573c645ecc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\operation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\equation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\printer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\component.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\monomial.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solving\solver.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solving\reducer.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solving\flipper.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solving\arranger.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+    <ClCompile Include="src\solving\solving_common.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\operation_types.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\equation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\printer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\operation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\component.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\monomial.hpp">
+      <Filter>Header Files\components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\solving_common.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\solver.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\reducer.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\flipper.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\arranger.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

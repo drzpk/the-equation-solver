@@ -10,7 +10,7 @@
 
 
 int main() {
-	std::string expression("x + 7=5");
+	std::string expression("3x + 7=5 - x");
 	Equation* eq;
 	try {
 		eq = new Equation(expression.c_str());

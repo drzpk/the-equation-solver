@@ -66,7 +66,7 @@ std::string Monomial::toString() const {
 	if (letter) {
 		output += letter;
 	}
-	if (pow) {
+	if (pow > 1) {
 		output += "^";
 		output += std::to_string(pow);
 	}

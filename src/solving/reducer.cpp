@@ -156,22 +156,23 @@ bool Reducer::tryAddSub(pElem elements) {
 				normalizeSigns(leftOp, leftOpElement, leftComp);
 			normalizeSigns(rightOp, rightOpElement, rightComp);
 
-			// Perform operation
+			// Check if components can be added and perform operation
+			// Addition and subtraction are parallel operations, so it's enough to check just one
 			bool success = false;
-			if (rightOp == OperationType::ADD
-				&& leftComp->isCompatible(rightComp, OperationType::ADD)) {
-				leftComp->operator+=(*rightComp);
-				delete rightComp;
-				success = true;
-			}
-			else if (rightOp == OperationType::SUBTRACT
-				&& leftComp->isCompatible(rightComp, OperationType::SUBTRACT)) {
-				leftComp->operator-=(*rightComp);
-				delete rightComp;
+			if (leftComp->isCompatible(rightComp, OperationType::ADD)) {
+				int leftSign = get_sign(elements, fst);
+				int rightSign = get_sign(elements, snd);
+
+				float value = (leftSign * leftComp->value) + (rightSign * rightComp->value);
+				leftComp->value = value;
 				success = true;
 			}
 
 			if (success) {
+				// Delete objects
+				delete rightComp;
+				delete rightOpElement;
+
 				// Remove redundant elements from list
 				auto eraseIt = snd - 1;
 				elements->erase(eraseIt + 1);

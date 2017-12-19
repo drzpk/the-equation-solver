@@ -17,7 +17,7 @@ public:
 	int pow;
 	char letter;
 
-	Monomial(float a) : Monomial(a, 0, 0) {};
+	Monomial(float a) : Monomial(a, 1, 0) {};
 	Monomial(float a, int pow) : Monomial(a, pow, 'x') {};
 	Monomial(float a, int pow, char letter);
 

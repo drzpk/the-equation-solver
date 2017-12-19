@@ -50,4 +50,7 @@ extern bool check_surrounding_operations(pElem elements, std::vector<Element*>::
 // Returns a sign (plus or minus) of the given element.
 // Note: this function only checks given element and optionally
 // a sign before it, so a reduction must be performed first!
+// Example:
+// -(-a) returns 1
+// +(-a) returns -1
 extern int get_sign(pElem elements, pElem_iterator it);

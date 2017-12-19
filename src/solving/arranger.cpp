@@ -87,22 +87,24 @@ bool Arranger::tryMove() {
 			continue;
 
 		if (!monomial->letter) {
-			// Move monomial without letters to the opposite side
+			// Move monomial without indeterminates to the opposite side
 			int sign = get_sign(optimal, it) * -1;
-			appendix = new Monomial(sign * monomial->getValue());
+			appendix = new Monomial(sign * abs(monomial->getValue()));
+			break;
 		}
 	}
 
 	// Moving elements: another -> optimal
-	for (auto it = another->begin(); appendix != nullptr && it != another->end(); it++) {
+	for (auto it = another->begin(); appendix == nullptr && it != another->end(); it++) {
 		Monomial* monomial = canBeMoved(another, it);
 		if (monomial == nullptr)
 			continue;
 
 		if (monomial->letter && monomial->pow > 0) {
-			// Move monomial with letter the the optimal side
+			// Move monomial with indeterminate the the optimal side
 			int sign = get_sign(another, it) * -1;
-			appendix = new Monomial(sign * monomial->getValue());
+			appendix = new Monomial(sign * abs(monomial->getValue()), monomial->pow, monomial->letter);
+			break;
 		}
 	}
 
@@ -124,7 +126,9 @@ bool Arranger::tryMove() {
 		optimal->push_back(optimalElement);
 		another->push_back(new Element(*addElement));
 		another->push_back(anotherElement);
-		reducer.reduce(equation);
+
+		// Assume that before arranger equation was fully reduced
+		while (reducer.reduce(equation));
 
 		return true;
 	}

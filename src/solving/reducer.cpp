@@ -83,6 +83,8 @@ bool Reducer::tryAddSub(pElem elements) {
 		// two components and one operator is needed
 		return false;
 	}
+
+	// Search for the left operand
 	for (auto fst = elements->begin(); (fst + 2) != elements->end(); fst++) {
 		Element* left = *fst;
 
@@ -108,43 +110,61 @@ bool Reducer::tryAddSub(pElem elements) {
 			continue;
 		}
 
+		// Operation before left operand (+ or -)
+		OperationType leftOp;
+		Element* leftOpElement = nullptr;
+
+		// Check if left operand is reduced (only + or - on its left side)
+		if (fst != elements->begin()) {
+			leftOpElement = *(fst - 1);
+			if (leftOpElement->type != ElementType::OPERATION)
+				continue;
+
+			leftOp = (OperationType) reinterpret_cast<int>(leftOpElement->pointer);
+			if (leftOp != OperationType::ADD && leftOp != OperationType::SUBTRACT)
+				continue;
+		}
+		else
+			leftOp = OperationType::ADD;
+
+		// Search for the right operand
 		for (auto snd = fst + 2; snd != elements->end(); snd++) {
 			// check operation on the left side
-			Element* opElement = *(snd - 1);
-			if (opElement->type != ElementType::OPERATION) {
+			Element* rightOpElement = *(snd - 1);
+			if (rightOpElement->type != ElementType::OPERATION)
 				continue;
-			}
 
-			OperationType lType = (OperationType) reinterpret_cast<int>(opElement->pointer);
-			if (lType != OperationType::ADD && lType != OperationType::SUBTRACT) {
+			OperationType rightOp = (OperationType) reinterpret_cast<int>(rightOpElement->pointer);
+			if (rightOp != OperationType::ADD && rightOp != OperationType::SUBTRACT) {
 				// no add/subtract operation on the left
 				continue;
 			}
 
-			bool valid = true;
+			// Check if right operand is reduced (only + or - on its right side)
 			if (snd + 1 != elements->end()) {
 				Element* rElement = *(snd + 1);
 				OperationType rType = (OperationType) reinterpret_cast<int>(rElement->pointer);
-				if (rType != OperationType::ADD && rType != OperationType::SUBTRACT) {
-					valid = false;
-				}
-			}
-
-			if (!valid) {
-				continue;
+				if (rType != OperationType::ADD && rType != OperationType::SUBTRACT)
+					continue;
 			}
 
 			Component* leftComp = static_cast<Component*>(left->pointer);
 			Component* rightComp = static_cast<Component*>((*snd)->pointer);
-			bool success = false;
 
-			if (lType == OperationType::ADD
+			// Normalize signs
+			if (leftOpElement)
+				normalizeSigns(leftOp, leftOpElement, leftComp);
+			normalizeSigns(rightOp, rightOpElement, rightComp);
+
+			// Perform operation
+			bool success = false;
+			if (rightOp == OperationType::ADD
 				&& leftComp->isCompatible(rightComp, OperationType::ADD)) {
 				leftComp->operator+=(*rightComp);
 				delete rightComp;
 				success = true;
 			}
-			else if (lType == OperationType::SUBTRACT
+			else if (rightOp == OperationType::SUBTRACT
 				&& leftComp->isCompatible(rightComp, OperationType::SUBTRACT)) {
 				leftComp->operator-=(*rightComp);
 				delete rightComp;
@@ -152,13 +172,53 @@ bool Reducer::tryAddSub(pElem elements) {
 			}
 
 			if (success) {
+				// Remove redundant elements from list
 				auto eraseIt = snd - 1;
 				elements->erase(eraseIt + 1);
 				elements->erase(eraseIt);
+
+				// Normalize signs
+				if (leftOpElement)
+					normalizeSigns(leftOp, leftOpElement, leftComp);
+
+				// Remove unnecesarry expression: +0/-0
+				// This transformation can empty vector. In that case, presentation is left up to printer.
+				if (!leftComp->value) {
+					if (fst != elements->begin()) {
+						// Remove component and its sign
+						auto eraseIt = fst - 1;
+						elements->erase(eraseIt + 1);
+						elements->erase(eraseIt);
+						delete leftComp;
+						if (leftOpElement)
+							delete leftOpElement;
+					}
+					else {
+						// Remove only component
+						elements->erase(fst);
+						delete leftComp;
+					}
+				}
+
 				return true;
 			}
 		}
 	}
 
 	return false;
+}
+
+void Reducer::normalizeSigns(OperationType& type, Element* operationElement, Component* operand) {
+	if (type == OperationType::SUBTRACT && operand->value < 0) {
+		// -(-a) => +(a)
+		operationElement->pointer = reinterpret_cast<void*>(OperationType::ADD);
+		operand->value *= -1.f;
+		type = OperationType::ADD;
+	}
+	else if (type == OperationType::ADD && operand->value < 0) {
+		// +(-a) => -(a)
+		operationElement->pointer = reinterpret_cast<void*>(OperationType::SUBTRACT);
+		operand->value *= -1.f;
+		type = OperationType::SUBTRACT;
+	}
 }

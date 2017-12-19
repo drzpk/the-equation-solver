@@ -1,12 +1,20 @@
 #include "arranger.hpp"
 
+std::vector<OperationType> Arranger::validSurroundings = {
+	OperationType::ADD,
+	OperationType::SUBTRACT
+};
+
 bool Arranger::arrange(Equation* equation) {
+	this->equation = equation;
+
 	if (!equation->getLeft() || !equation->getRight()) {
 		// Equation must have two sides in order for this
 		// class to work.
 		return false;
 	}
 
+	// Step #1
 	if (getOptimalSide(equation) == -1) {
 		optimal = equation->getLeft();
 		another = equation->getRight();
@@ -16,7 +24,8 @@ bool Arranger::arrange(Equation* equation) {
 		another = equation->getLeft();
 	}
 
-	return false;
+	// Step #2 and #3
+	return tryMove() || tryMulDiv();
 }
 
 short Arranger::getOptimalSide(Equation* equation) {
@@ -69,28 +78,76 @@ bool Arranger::tryMove() {
 	// This behavior should be changed in the future, so the other
 	// side will be also taken into account when moving monomials around.
 
-	std::vector<OperationType> validSurroundings = {
-		OperationType::ADD,
-		OperationType::SUBTRACT
-	};
+	Monomial* appendix = nullptr;
 
+	// Moving elements: optimal -> another
 	for (auto it = optimal->begin(); it != optimal->end(); it++) {
-		Element* element = *it;
-		if (element->type != ElementType::COMPONENT) {
-			// Only components can be checked.
+		Monomial* monomial = canBeMoved(optimal, it);
+		if (monomial == nullptr)
 			continue;
-		}
 
-		if (!check_surrounding_operations(optimal, it, validSurroundings)) {
-			// No moving can be performed when elements aren't
-			// multiplied with each other yet.
-			continue;
+		if (!monomial->letter) {
+			// Move monomial without letters to the opposite side
+			int sign = get_sign(optimal, it) * -1;
+			appendix = new Monomial(sign * monomial->getValue());
 		}
+	}
+
+	// Moving elements: another -> optimal
+	for (auto it = another->begin(); appendix != nullptr && it != another->end(); it++) {
+		Monomial* monomial = canBeMoved(another, it);
+		if (monomial == nullptr)
+			continue;
+
+		if (monomial->letter && monomial->pow > 0) {
+			// Move monomial with letter the the optimal side
+			int sign = get_sign(another, it) * -1;
+			appendix = new Monomial(sign * monomial->getValue());
+		}
+	}
+
+	// Add appendix to the sides
+	if (appendix != nullptr) {
+		Element* addElement = new Element();
+		addElement->type = ElementType::OPERATION;
+		addElement->pointer = reinterpret_cast<void*>(OperationType::ADD);
 		
-		Component* component = static_cast<Component*>(element->pointer);
+		Element* optimalElement = new Element();
+		optimalElement->type = ElementType::COMPONENT;
+		optimalElement->pointer = appendix;
+		Element* anotherElement = new Element();
+		anotherElement->type = ElementType::COMPONENT;
+		anotherElement->pointer = new Monomial(*appendix);
+
+		// Only add new elements to equation and let the reducer do the rest
+		optimal->push_back(addElement);
+		optimal->push_back(optimalElement);
+		another->push_back(new Element(*addElement));
+		another->push_back(anotherElement);
+		reducer.reduce(equation);
+
+		return true;
 	}
 
 	return false;
+}
+
+Monomial* Arranger::canBeMoved(pElem side, pElem_iterator it) {
+	Element* element = *it;
+	if (element->type != ElementType::COMPONENT) {
+		// Only components can be checked.
+		return nullptr;
+	}
+
+	if (!check_surrounding_operations(side, it, validSurroundings)) {
+		// No moving can be performed when elements aren't
+		// multiplied with each other yet.
+		return nullptr;
+	}
+
+	Component* component = static_cast<Component*>(element->pointer);
+	Monomial* monomial = dynamic_cast<Monomial*>(component);
+	return monomial;
 }
 
 bool Arranger::tryMulDiv() {

@@ -2,6 +2,7 @@
 
 #include "..\equation.hpp"
 #include "solving_common.hpp"
+#include "reducer.hpp"
 #include "..\operation_types.hpp"
 #include "..\components\component.hpp"
 #include "..\components\monomial.hpp"
@@ -23,7 +24,14 @@
 //    reduce their numeric parts to one.
 class Arranger {
 private:
+	// Sides of the equation
 	pElem optimal, another;
+	// The equation
+	Equation* equation;
+	// Valid surroundings for moving components between sides of the equation
+	static std::vector<OperationType> validSurroundings;
+	// A reducer instance
+	Reducer reducer;
 
 public:
 	// Tries to arrange the given equation. Returns
@@ -37,6 +45,8 @@ private:
 
 	// Step #2
 	bool tryMove();
+	// Returns pointer if element can be moved and is a monomial.
+	Monomial* canBeMoved(pElem side, pElem_iterator it);
 
 	// Step #3
 	bool tryMulDiv();

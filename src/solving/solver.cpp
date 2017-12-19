@@ -28,6 +28,12 @@ bool Solver::solve() {
 			lastOperation = "flipping";
 		}
 
+		// Step #3: arrangement
+		else if (arranger.arrange(equation)) {
+			stepCompleted = true;
+			lastOperation = "arrangement";
+		}
+
 		solved |= stepCompleted;
 		if (!stepCompleted)
 			break;

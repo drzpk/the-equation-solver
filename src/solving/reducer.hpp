@@ -27,4 +27,6 @@ private:
 
 	// Approach #2
 	bool tryAddSub(pElem elements);
+	// Change signs to more suitable representation for reduction.
+	void normalizeSigns(OperationType& type, Element* operationElement, Component* operand);
 };

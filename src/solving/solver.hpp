@@ -6,6 +6,7 @@
 
 #include "reducer.hpp"
 #include "flipper.hpp"
+#include "arranger.hpp"
 
 // DEBUG
 #include "..\printer.hpp"
@@ -37,6 +38,7 @@ private:
 
 	Reducer reducer;
 	Flipper flipper;
+	Arranger arranger;
 
 public:
 	Solver(Equation* equation) : equation(equation) {};

@@ -4,18 +4,38 @@
 #include "..\components\component.hpp"
 
 #include <vector>
+#include <stdexcept>
 
 // Holds available types of the equation elements.
 enum ElementType {
+	// Element is component
 	COMPONENT,
+	// Element is operation
 	OPERATION,
+	// Element is parentheses
 	ELEMENTS
 };
 
 // Holds elements of the equation
 struct Element {
+	~Element();
+
+	// Type of the data this element contains
 	ElementType type;
+	// Pointer to the data this element contains (see the ElementType enum)
 	void* pointer;
+
+	// Returns a component associated with this element.
+	// Throws std::runtime_error if element doesn't contain Component.
+	Component* getComponent() const;
+
+	// Returns an operation associated with this element.
+	// Throws std::runtime_error if element doesn't contain OperationType.
+	OperationType getOperation() const;
+
+	// Returns a contents of parentheses associated with this element.
+	// Throws std::runtime_error if element doesn't contain parentheses.
+	std::vector<Element*>* getParentheses() const;
 };
 
 typedef std::vector<Element*>* pElem;

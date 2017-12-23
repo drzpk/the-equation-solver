@@ -155,5 +155,26 @@ Monomial* Arranger::canBeMoved(pElem side, pElem_iterator it) {
 }
 
 bool Arranger::tryMulDiv() {
+	bool consumed = false;
+
+	// Case #1: only ax^n on the optimal side
+	if (optimal->size() == 1 && optimal->at(0)->type == ElementType::COMPONENT) {
+		// Solution: divide all monomials on both sides by 'a'
+		float a = optimal->at(0)->getComponent()->value;
+		if (a) {
+			auto fun = [a](Component* comp) {
+				comp->value /= a;
+			};
+			for_each_component(optimal, fun);
+			for_each_component(another, fun);
+
+			consumed = true;
+		}
+	}
+
+	// Reduce expression, if an operation was performed
+	if (consumed)
+		while (reducer.reduce(equation));
+
 	return false;
 }

@@ -97,3 +97,13 @@ int get_sign(pElem elements, pElem_iterator it) {
 
 	return sign * prev_sign;
 }
+
+void for_each_component(pElem elements, std::function<void(Component*)> fun) {
+	for (auto elem : *elements) {
+		if (elem->type != ElementType::COMPONENT)
+			continue;
+
+		Component* comp = elem->getComponent();
+		fun(comp);
+	}
+}

@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <stdexcept>
+#include <functional>
 
 // Holds available types of the equation elements.
 enum ElementType {
@@ -44,7 +45,7 @@ typedef std::vector<Element*>::iterator pElem_iterator;
 
 // Returns whether operation on the left and on the right
 // is in the list.
-extern bool check_surrounding_operations(pElem elements, std::vector<Element*>::iterator it,
+bool check_surrounding_operations(pElem elements, std::vector<Element*>::iterator it,
 	std::vector<OperationType>& allowed_operations);
 
 // Returns a sign (plus or minus) of the given element.
@@ -53,4 +54,7 @@ extern bool check_surrounding_operations(pElem elements, std::vector<Element*>::
 // Example:
 // -(-a) returns 1
 // +(-a) returns -1
-extern int get_sign(pElem elements, pElem_iterator it);
+int get_sign(pElem elements, pElem_iterator it);
+
+// Executes given function on each element.
+void for_each_component(pElem elements, std::function<void(Component*)> fun);

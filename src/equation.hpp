@@ -2,6 +2,7 @@
 
 #include "components\component.hpp"
 #include "components\monomial.hpp"
+#include "components\parenthesis.hpp"
 #include "operation_types.hpp"
 #include "solving\solving_common.hpp"
 

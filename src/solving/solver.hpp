@@ -7,6 +7,7 @@
 #include "reducer.hpp"
 #include "flipper.hpp"
 #include "arranger.hpp"
+#include "skipper.hpp"
 
 // DEBUG
 #include "..\printer.hpp"
@@ -21,11 +22,11 @@
 // applied in the specific order.
 // This order is described below.
 // 1. Reduction: storing the equation in the simples form possible.
-// 2. Flipping: swapping left side of the equation with right side,
+// 2. Skipping: bypassing parentheses in various ways.
+// 3. Flipping: swapping left side of the equation with right side,
 //    when all variables are on one side.
-// 3. Arrangement: performing various operation so as a result
+// 4. Arrangement: performing various operation so as a result
 //    there's only one variable on only one side of the equation.
-// 4. Skipping: bypassing parentheses in various ways.
 //
 // If none of the trials described above works, the equation
 // is checked whether it's a polymonial equation. 
@@ -37,6 +38,7 @@ private:
 	bool solved;
 
 	Reducer reducer;
+	Skipper skipper;
 	Flipper flipper;
 	Arranger arranger;
 

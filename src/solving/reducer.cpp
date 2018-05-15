@@ -19,21 +19,25 @@ bool Reducer::reduce(Equation* equation) {
 
 bool Reducer::tryMulDiv(pElem elements) {
 	for (auto it = elements->begin(); it != elements->end(); it++) {
-		if ((*it)->type == ElementType::ELEMENTS) {
-			pElem subelements = static_cast<pElem>((*it)->pointer);
+		if ((*it)->type == ElementType::COMPONENT) {
+			Component* comp = static_cast<Component*>((*it)->pointer);
+			if (!strcmp(comp->getName(), "parenthesis")) {
+				// Found parentheses
+				Parenthesis* parenthesis = static_cast<Parenthesis*>((*it)->pointer);
 
-			// found parentheses
-			if (tryMulDiv(subelements)) {
-				return true;
-			}
+				if (tryMulDiv(parenthesis->contents)) {
+					return true;
+				}
 
-			// remove parenthesis, if needed
-			if (subelements->size() == 1) {
-				(*it) = subelements->at(0);
-				delete subelements;
+				// Remove parenthesis, if needed
+				if (parenthesis->contents->size() == 1) {
+					(*it) = new Element(*parenthesis->contents->at(0));
+					delete parenthesis;
+				}
 			}
 		}
-		else if ((*it)->type == ElementType::OPERATION) {
+
+		if ((*it)->type == ElementType::OPERATION) {
 			OperationType opType = (OperationType) reinterpret_cast<int>((*it)->pointer);
 			if (opType != OperationType::MULTIPLY && opType != OperationType::DIVIDE) {
 				continue;
@@ -52,17 +56,31 @@ bool Reducer::tryMulDiv(pElem elements) {
 			Component* rightComp = static_cast<Component*>(next->pointer);
 			bool success = false;
 
-			if (opType == OperationType::MULTIPLY
-				&& leftComp->isCompatible(rightComp, OperationType::MULTIPLY)) {
-				leftComp->operator*=(*rightComp);
-				delete rightComp;
-				success = true;
+			if (opType == OperationType::MULTIPLY) {
+				if (leftComp->isCompatible(rightComp, opType)) {
+					leftComp->operator*=(*rightComp);
+					delete rightComp;
+					success = true;
+				}
+				else if (rightComp->isCompatible(leftComp, opType)) {
+					rightComp->operator*=(*leftComp);
+					delete leftComp;
+					(*(it - 1))->pointer = rightComp;
+					success = true;
+				}
 			}
-			else if (opType == OperationType::DIVIDE
-				&& leftComp->isCompatible(rightComp, OperationType::DIVIDE)) {
-				leftComp->operator/=(*rightComp);
-				delete rightComp;
-				success = true;
+			else if (opType == OperationType::DIVIDE) {
+				if (leftComp->isCompatible(rightComp, opType)) {
+					leftComp->operator/=(*rightComp);
+					delete rightComp;
+					success = true;
+				}
+				else if (rightComp->isCompatible(leftComp, opType)) {
+					rightComp->operator/=(*leftComp);
+					delete leftComp;
+					(*(it - 1))->pointer = rightComp;
+					success = true;
+				}
 			}
 
 			if (success) {
@@ -92,22 +110,23 @@ bool Reducer::tryAddSub(pElem elements) {
 			continue;
 		}
 
-		if (left->type == ElementType::ELEMENTS) {
-			// found parentheses
-			pElem subelements = static_cast<pElem>((*fst)->pointer);
+		if (left->type == ElementType::COMPONENT) {
+			Component* comp = static_cast<Component*>(left->pointer);
+			if (!strcmp(comp->getName(), "parenthesis")) {
+				// Found parentheses
+				Parenthesis* parenthesis = static_cast<Parenthesis*>(left->pointer);
+				
+				// found parentheses
+				if (tryAddSub(parenthesis->contents)) {
+					// remove parenthesis, if needed
+					if (parenthesis->contents->size() == 1) {
+						(*fst) = new Element(*parenthesis->contents->at(0));
+						delete parenthesis;
+					}
 
-			// found parentheses
-			if (tryAddSub(subelements)) {
-				return true;
+					return true;
+				}
 			}
-
-			// remove parenthesis, if needed
-			if (subelements->size() == 1) {
-				(*fst) = subelements->at(0);
-				delete subelements;
-			}
-
-			continue;
 		}
 
 		// Operation before left operand (+ or -)

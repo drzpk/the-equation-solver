@@ -41,14 +41,18 @@ Component& Monomial::operator-=(const Component& other) {
 }
 
 Component& Monomial::operator*=(const Component& other) {
-	value *= CAST(other).getValue();
-	pow += CAST(other).pow;
+	auto cast = CAST(other);
+	value *= cast.getValue();
+	if (letter && cast.letter)
+		pow += cast.pow;
 	return *this;
 }
 
 Component& Monomial::operator/=(const Component& other) {
-	value /= CAST(other).getValue();
-	pow -= CAST(other).pow;
+	auto cast = CAST(other);
+	value /= cast.getValue();
+	if (letter && cast.letter)
+		pow -= cast.pow;
 	return *this;
 }
 
@@ -59,7 +63,7 @@ Component* Monomial::clone() const {
 
 std::string Monomial::toString() const {
 	std::string output;
-	if (!letter || value != 1.f) {
+	if (!letter || abs(1.f - value) > 0.0001f) {
 		// no need to print 1 before variable
 		output += Component::toString();
 	}

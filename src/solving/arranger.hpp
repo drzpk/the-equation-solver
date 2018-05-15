@@ -6,6 +6,7 @@
 #include "..\operation_types.hpp"
 #include "..\components\component.hpp"
 #include "..\components\monomial.hpp"
+#include "..\components\parenthesis.hpp"
 
 #include <string.h>
 

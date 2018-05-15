@@ -22,13 +22,19 @@ bool Solver::solve() {
 			lastOperation = "reduction";
 		}
 
-		// Step #2: flipping
+		// Step #2: skipping
+		else if (skipper.skip(equation)) {
+			stepCompleted = true;
+			lastOperation = "skipping";
+		}
+
+		// Step #3: flipping
 		else if (flipper.flip(equation)) {
 			stepCompleted = true;
 			lastOperation = "flipping";
 		}
 
-		// Step #3: arrangement
+		// Step #4: arrangement
 		else if (arranger.arrange(equation)) {
 			stepCompleted = true;
 			lastOperation = "arrangement";

@@ -12,13 +12,13 @@ enum ElementType {
 	// Element is component
 	COMPONENT,
 	// Element is operation
-	OPERATION,
-	// Element is parentheses
-	ELEMENTS
+	OPERATION
 };
 
 // Holds elements of the equation
 struct Element {
+	Element() = default;
+	Element(Element &other);
 	~Element();
 
 	// Type of the data this element contains
@@ -33,10 +33,6 @@ struct Element {
 	// Returns an operation associated with this element.
 	// Throws std::runtime_error if element doesn't contain OperationType.
 	OperationType getOperation() const;
-
-	// Returns a contents of parentheses associated with this element.
-	// Throws std::runtime_error if element doesn't contain parentheses.
-	std::vector<Element*>* getParentheses() const;
 };
 
 typedef std::vector<Element*>* pElem;

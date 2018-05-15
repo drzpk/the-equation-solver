@@ -4,7 +4,7 @@
 
 #include <string>
 
-#define CAST(other) dynamic_cast<const Monomial&>(other)
+#define CAST(other) static_cast<const Monomial&>(other)
 
 
 // This class represents a monomial, which can be described

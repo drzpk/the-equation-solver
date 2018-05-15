@@ -29,12 +29,12 @@ std::ostringstream Printer::format(pElem elements) const {
 	for (auto it = elements->cbegin(); it != elements->cend(); it++) {
 		Element* element = *it;
 		switch (element->type) {
-		case ELEMENTS:
-			output << format(static_cast<pElem>(element->pointer)).str();
-			break;
 		case COMPONENT: {
 			Component* component = static_cast<Component*>(element->pointer);
-			output << component;
+			if (!strcmp(component->getName(), "parenthesis"))
+				output << "(" << format(static_cast<Parenthesis*>(component)->contents).str() << ")";
+			else
+				output << component;
 			break;
 		}
 		case OPERATION: {

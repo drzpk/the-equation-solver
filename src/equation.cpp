@@ -135,20 +135,18 @@ pElem Equation::parse(const std::string& source, size_t start, size_t end) {
 			int open = 0;
 			for (size_t j = i; j < end; j++) {
 				if (source[j] == ')') {
+					open--;
 					if (!open) {
 						// found desired parenthesis
 						subend = j;
 						found = true;
 						break;
 					}
-					else {
-						open--;
-						if (open < 0) {
-							char buffer[38] = { 0 };
-							sprintf_s(buffer, 37, "unexpected closing parenthesis at %zi", j + 1);
-							delete tmpElements;
-							throw std::invalid_argument(buffer);
-						}
+					else if (open < 0) {
+						char buffer[38] = { 0 };
+						sprintf_s(buffer, 37, "unexpected closing parenthesis at %zi", j + 1);
+						delete tmpElements;
+						throw std::invalid_argument(buffer);
 					}
 				}
 				else if (source[j] == '(') {
@@ -163,13 +161,14 @@ pElem Equation::parse(const std::string& source, size_t start, size_t end) {
 				throw std::invalid_argument(buffer);
 			}
 			
-			auto subElement = parse(source, i, subend);
+			auto subElement = parse(source, i + 1, subend);
 			Element* element = new Element;
-			element->type = ElementType::ELEMENTS;
-			element->pointer = subElement;
+			element->type = ElementType::COMPONENT;
+			element->pointer = new Parenthesis(subElement);
 			tmpElements->push_back(element);
 
 			i = subend;
+			expect_operator = true;
 		}
 		else {
 			buffer += c;
@@ -179,7 +178,7 @@ pElem Equation::parse(const std::string& source, size_t start, size_t end) {
 
 	if (!buffer.size()) {
 		// Formula must end with a component.
-		// Calcullator mode isn't supported yet.
+		// Calculator mode isn't supported yet.
 		char buffer[37] = { 0 };
 		sprintf_s(buffer, 36, "unexpected end of the formula at %zi", source.size());
 		delete tmpElements;
@@ -243,13 +242,6 @@ pElem Equation::cloneElements(pElem elements) {
 		newElement->type = elem->type;
 
 		switch (elem->type) {
-		case ELEMENTS: {
-			pElem oldElements = static_cast<pElem>(elem->pointer);
-			pElem newElements = cloneElements(oldElements);
-
-			newElement->pointer = newElements;
-			break;
-		}
 		case OPERATION:
 			newElement->pointer = elem->pointer;
 			break;
@@ -270,19 +262,6 @@ pElem Equation::cloneElements(pElem elements) {
 void Equation::deleteElements(pElem elements) {
 	for (auto it = elements->cbegin(); it != elements->cend(); it++) {
 		Element* element = *it;
-		switch (element->type) {
-		case ELEMENTS: {
-			pElem subElements = static_cast<pElem>(element->pointer);
-			deleteElements(subElements);
-			break;
-		}
-		case COMPONENT: {
-			Component* component = static_cast<Component*>(element->pointer);
-			delete component;
-			break;
-		}
-		}
-
 		delete element;
 	}
 

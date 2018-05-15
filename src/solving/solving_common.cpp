@@ -1,19 +1,23 @@
 #include "solving_common.hpp"
 
+Element::Element(Element &other) {
+	type = other.type;
+	switch (type) {
+	case COMPONENT: {
+		Component* comp = static_cast<Component*>(pointer);
+		pointer = comp->clone();
+		break;
+	}
+	case OPERATION: {
+		pointer = other.pointer;
+	}
+	}
+}
 
 Element::~Element() {
 	// Remove contents, depending on their type
-	switch (type) {
-	case ElementType::COMPONENT:
+	if (type == ElementType::COMPONENT)
 		delete getComponent();
-		break;
-	case ElementType::ELEMENTS:
-		auto subElements = getParentheses();
-		for (auto it = subElements->cbegin(); it != subElements->cend(); it++)
-			delete *it;
-		delete subElements;
-		break;
-	}
 }
 
 Component* Element::getComponent() const {
@@ -31,14 +35,6 @@ OperationType Element::getOperation() const {
 #pragma warning(suppress : 4311 4302)
 	OperationType operation = (OperationType) reinterpret_cast<int>(pointer);
 	return operation;
-}
-
-pElem Element::getParentheses() const {
-	if (type != ElementType::ELEMENTS)
-		throw std::runtime_error("this element doesn't contain parentheses");
-
-	pElem parentheses = reinterpret_cast<pElem>(pointer);
-	return parentheses;
 }
 
 bool check_surrounding_operations(pElem elements, std::vector<Element*>::iterator it,

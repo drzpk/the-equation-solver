@@ -47,27 +47,24 @@ int Arranger::getRank(pElem elements) {
 	int rank = 0;
 	for (auto it = elements->cbegin(); it != elements->cend(); it++) {
 		Element* element = *it;
-		if (element->type == ElementType::ELEMENTS) {
-			pElem subElements = static_cast<pElem>(element->pointer);
-			rank += getRank(subElements);
-		}
-
 		if (element->type != ElementType::COMPONENT) {
 			continue;
 		}
 
 		Component* component = static_cast<Component*>(element->pointer);
-		if (strcmp(component->getName(), "monomial")) {
-			continue;
-		}
+		if (!strcmp(component->getName(), "monomial")) {
+			Monomial* monomial = static_cast<Monomial*>(component);
+			if (!monomial->letter) {
+				// Only monomials with letters can be ranked.
+				continue;
+			}
 
-		Monomial* monomial = dynamic_cast<Monomial*>(component);
-		if (!monomial->letter) {
-			// Only monomials with letters can be ranked.
-			continue;
+			rank += (monomial->getValue() * (monomial->pow + 1));
 		}
-
-		rank += (monomial->getValue() * (monomial->pow + 1));
+		else if (!strcmp(component->getName(), "parenthesis")) {
+			Parenthesis* parenthesis = static_cast<Parenthesis*>(element->pointer);
+			rank += getRank(parenthesis->contents);
+		}
 	}
 
 	return rank;
@@ -110,14 +107,14 @@ bool Arranger::tryMove() {
 
 	// Add appendix to the sides
 	if (appendix != nullptr) {
-		Element* addElement = new Element();
+		Element* addElement = new Element;
 		addElement->type = ElementType::OPERATION;
 		addElement->pointer = reinterpret_cast<void*>(OperationType::ADD);
 		
-		Element* optimalElement = new Element();
+		Element* optimalElement = new Element;
 		optimalElement->type = ElementType::COMPONENT;
 		optimalElement->pointer = appendix;
-		Element* anotherElement = new Element();
+		Element* anotherElement = new Element;
 		anotherElement->type = ElementType::COMPONENT;
 		anotherElement->pointer = new Monomial(*appendix);
 

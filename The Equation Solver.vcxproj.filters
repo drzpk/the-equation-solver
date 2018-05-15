@@ -60,6 +60,12 @@
     <ClCompile Include="src\solving\solving_common.cpp">
       <Filter>Source Files\solving</Filter>
     </ClCompile>
+    <ClCompile Include="src\solving\skipper.cpp">
+      <Filter>Source Files\solving</Filter>
+    </ClCompile>
+    <ClCompile Include="src\components\parenthesis.cpp">
+      <Filter>Source Files\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\operation_types.hpp">
@@ -94,6 +100,12 @@
     </ClInclude>
     <ClInclude Include="src\solving\arranger.hpp">
       <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\solving\skipper.hpp">
+      <Filter>Header Files\solving</Filter>
+    </ClInclude>
+    <ClInclude Include="src\components\parenthesis.hpp">
+      <Filter>Header Files\components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

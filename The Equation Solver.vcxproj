@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="src\components\component.cpp" />
     <ClCompile Include="src\components\monomial.cpp" />
+    <ClCompile Include="src\components\parenthesis.cpp" />
     <ClCompile Include="src\equation.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\operation.cpp" />
@@ -28,12 +29,14 @@
     <ClCompile Include="src\solving\arranger.cpp" />
     <ClCompile Include="src\solving\flipper.cpp" />
     <ClCompile Include="src\solving\reducer.cpp" />
+    <ClCompile Include="src\solving\skipper.cpp" />
     <ClCompile Include="src\solving\solver.cpp" />
     <ClCompile Include="src\solving\solving_common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\components\component.hpp" />
     <ClInclude Include="src\components\monomial.hpp" />
+    <ClInclude Include="src\components\parenthesis.hpp" />
     <ClInclude Include="src\equation.hpp" />
     <ClInclude Include="src\operation.hpp" />
     <ClInclude Include="src\operation_types.hpp" />
@@ -41,6 +44,7 @@
     <ClInclude Include="src\solving\arranger.hpp" />
     <ClInclude Include="src\solving\flipper.hpp" />
     <ClInclude Include="src\solving\reducer.hpp" />
+    <ClInclude Include="src\solving\skipper.hpp" />
     <ClInclude Include="src\solving\solver.hpp" />
     <ClInclude Include="src\solving\solving_common.hpp" />
   </ItemGroup>
@@ -48,7 +52,7 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{84A7A5C0-EE47-469B-A653-BD9332907B6B}</ProjectGuid>
     <RootNamespace>TheEquationSolver</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
